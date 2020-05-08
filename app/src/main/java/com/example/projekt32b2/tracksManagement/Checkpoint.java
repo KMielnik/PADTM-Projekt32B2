@@ -25,6 +25,7 @@ public class Checkpoint {
 
     public Checkpoint(LatLng position) {
         this.position = position;
+        markerRadius = 20.;
     }
 
     private BitmapDescriptor _getIcon(CheckpointType type) {

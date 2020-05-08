@@ -36,9 +36,6 @@ public class RunActivity extends FragmentActivity implements OnMapReadyCallback 
         String trackJson = getIntent().getExtras().getString("track");
         Track track = gson.fromJson(trackJson, Track.class);
 
-        track.PlaceTrackOnMap(googleMap);
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        track.PlaceTrackOnMap(googleMap, true);
     }
 }
