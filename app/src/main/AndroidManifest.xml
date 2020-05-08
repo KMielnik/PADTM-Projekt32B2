@@ -31,8 +31,12 @@
             android:value="@string/google_maps_key" />
 
         <activity
+            android:name=".RunActivity"
+            android:label="@string/title_activity_run"></activity>
+        <activity android:name=".TrackListActivity" />
+        <activity
             android:name=".MapsTestActivity"
-            android:label="@string/title_activity_maps_test"></activity>
+            android:label="@string/title_activity_maps_test" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -103,6 +103,7 @@ public class MapsTestActivity extends FragmentActivity implements OnMapReadyCall
                 MarkerOptions newMarker = new MarkerOptions()
                         .position(latLng)
                         .title("Checkpoint: " + (markers.size() + 1))
+                        .flat(true)
                         .icon(BitmapDescriptorFactory.defaultMarker(actuallySelectedColor));
 
                 markers.add(mMap.addMarker(newMarker));

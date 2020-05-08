@@ -15,7 +15,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void openMapActivity(View view){
-        Intent intent = new Intent(this, MapsTestActivity.class);
+        Intent intent = new Intent(this, TrackListActivity.class);
         startActivity(intent);
     }
 }
