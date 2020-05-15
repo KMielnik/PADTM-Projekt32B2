@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.location.LocationManager;
@@ -27,6 +28,8 @@ public class TrackListActivity extends AppCompatActivity {
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
     private Gson gson;
+
+    private int LAUNCH_CREATE_TRACK_ACTIVITY = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +65,24 @@ public class TrackListActivity extends AppCompatActivity {
         gson = new Gson();
 
         seedTrackList();
+    }
+
+    public void onNewTrackButtonClick(View view) {
+        Intent i = new Intent(this, CreateTrackActivity.class);
+        startActivityForResult(i, LAUNCH_CREATE_TRACK_ACTIVITY);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == LAUNCH_CREATE_TRACK_ACTIVITY) {
+            if (resultCode == Activity.RESULT_OK) {
+                Track track = gson.fromJson(data.getStringExtra("track"), Track.class);
+                trackList.add(track);
+                mAdapter.notifyItemInserted(trackList.size() - 1);
+            }
+        }
     }
 
     private void seedTrackList() {
