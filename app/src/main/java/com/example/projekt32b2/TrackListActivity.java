@@ -2,13 +2,16 @@ package com.example.projekt32b2;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
 import com.example.projekt32b2.tracksManagement.Track;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.Task;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -34,6 +37,7 @@ public class TrackListActivity extends AppCompatActivity {
         i.putExtra("track", gson.toJson(trackList.get(0)));
         startActivity(i);
     }
+
 
     private void seedTrackList() {
         for (int i = 0; i < 5; i++) {
