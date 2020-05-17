@@ -24,6 +24,9 @@ public class Track {
     public void AddCheckpoint(LatLng position) {
         checkpoints.add(new Checkpoint(position));
     }
+    public void AddCheckpoint(LatLng position,double markerRadius) {
+        checkpoints.add(new Checkpoint(position,markerRadius));
+    }
 
     public void PlaceTrackOnMap(GoogleMap map, boolean showPath) {
         List<LatLng> positions = new ArrayList<>();
@@ -51,6 +54,24 @@ public class Track {
         }
     }
 
+    public void RefreshUserTrack(GoogleMap map) {
+        List<LatLng> positions = new ArrayList<>();
+
+        for(int i=0;i<checkpoints.size();i++)
+        {
+            positions.add(checkpoints.get(i).position);
+        }
+
+        if (checkpoints.size()>2)
+            polyline.remove();
+
+            polyline = map.addPolyline(new PolylineOptions()
+                    .addAll(positions)
+                    .width(5)
+                    .color(Color.BLUE));
+
+    }
+
     public void RemoveTrackFromMap() {
         for(Checkpoint checkpoint : checkpoints)
             checkpoint.RemoveMarker();
@@ -58,5 +79,10 @@ public class Track {
 
         polyline.remove();
         polyline = null;
+    }
+
+    public List<Checkpoint> getCheckpoints()
+    {
+        return checkpoints;
     }
 }

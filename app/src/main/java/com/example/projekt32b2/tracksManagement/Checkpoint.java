@@ -34,10 +34,10 @@ public class Checkpoint {
                 return BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
             case CHECKPOINT:
                 return BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN);
+            case CHECKPOINT_CHECKED:
+                return BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE);
             case FINISH:
                 return BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
-            case HUMAN:
-                return BitmapDescriptorFactory.fromResource(R.drawable.person);
             default:
                 return BitmapDescriptorFactory.fromResource(android.R.drawable.btn_default);
         }
