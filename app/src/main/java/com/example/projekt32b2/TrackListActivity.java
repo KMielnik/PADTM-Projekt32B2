@@ -95,5 +95,13 @@ public class TrackListActivity extends AppCompatActivity {
 
             trackList.add(track);
         }
+
+        Track szczecinTrack=new Track("Szczecin");
+        szczecinTrack.AddCheckpoint(new LatLng(53.428555, 14.532046),10);
+        szczecinTrack.AddCheckpoint(new LatLng(53.429154, 14.532199),10);
+        szczecinTrack.AddCheckpoint(new LatLng(53.430524, 14.532502),10);
+        szczecinTrack.AddCheckpoint(new LatLng(53.431670, 14.532698),10);
+        szczecinTrack.AddCheckpoint(new LatLng(53.431366, 14.534514 ),10);
+        trackList.add(szczecinTrack);
     }
 }
