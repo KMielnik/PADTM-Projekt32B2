@@ -10,8 +10,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.projekt32b2.tracksManagement.Track;
 
-import org.w3c.dom.Text;
-
 import java.util.List;
 
 public class TrackListAdapter extends RecyclerView.Adapter<TrackListAdapter.MyViewHolder> {
@@ -26,11 +24,14 @@ public class TrackListAdapter extends RecyclerView.Adapter<TrackListAdapter.MyVi
 
 
     public static class MyViewHolder extends RecyclerView.ViewHolder{
-        public TextView textView;
+        public TextView track_name_textview;
+        public TextView track_length_textview;
+
         public MyViewHolder(View v) {
             super(v);
 
-            textView = v.findViewById(R.id.track_name);
+            track_name_textview = v.findViewById(R.id.track_name);
+            track_length_textview = v.findViewById(R.id.length_textview);
         }
 
         public void bind(final Track item, final OnItemClickListener listener) {
@@ -70,7 +71,8 @@ public class TrackListAdapter extends RecyclerView.Adapter<TrackListAdapter.MyVi
     public void onBindViewHolder(@NonNull TrackListAdapter.MyViewHolder holder, int position) {
         Track track = tracks.get(position);
 
-        holder.textView.setText(track.Name);
+        holder.track_name_textview.setText(track.Name);
+        holder.track_length_textview.setText(String.format("%.2f", track.getTrackLength()) + "m");
         holder.bind(tracks.get(position), listener);
     }
 
