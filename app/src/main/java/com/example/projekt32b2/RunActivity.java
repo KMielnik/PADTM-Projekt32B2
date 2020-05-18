@@ -59,7 +59,6 @@ public class RunActivity extends FragmentActivity implements OnMapReadyCallback 
         createLocationRequest();
 
 
-        checkpoints = new ArrayList<Checkpoint>();
         locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {

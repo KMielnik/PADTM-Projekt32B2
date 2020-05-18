@@ -59,11 +59,13 @@ public class Checkpoint {
         circle = map.addCircle(circleOptions);
     }
 
-    public void RemoveMarker(){
-        marker.remove();
+    public void RemoveMarker() {
+        if (marker != null)
+            marker.remove();
         marker = null;
 
-        circle.remove();
+        if (circle != null)
+            circle.remove();
         circle = null;
     }
 }

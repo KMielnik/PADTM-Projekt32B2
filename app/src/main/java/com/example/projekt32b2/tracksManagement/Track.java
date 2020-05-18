@@ -24,19 +24,19 @@ public class Track {
     public void AddCheckpoint(LatLng position) {
         checkpoints.add(new Checkpoint(position));
     }
-    public void AddCheckpoint(LatLng position,double markerRadius) {
-        checkpoints.add(new Checkpoint(position,markerRadius));
+
+    public void AddCheckpoint(LatLng position, double markerRadius) {
+        checkpoints.add(new Checkpoint(position, markerRadius));
     }
 
     public void PlaceTrackOnMap(GoogleMap map, boolean showPath) {
         List<LatLng> positions = new ArrayList<>();
 
-        for(int i=0;i<checkpoints.size();i++)
-        {
+        for (int i = 0; i < checkpoints.size(); i++) {
             CheckpointType type;
-            if(i==0)
+            if (i == 0)
                 type = CheckpointType.START;
-            else if (i==checkpoints.size()-1)
+            else if (i == checkpoints.size() - 1)
                 type = CheckpointType.FINISH;
             else
                 type = CheckpointType.CHECKPOINT;
@@ -46,7 +46,7 @@ public class Track {
             positions.add(checkpoints.get(i).position);
         }
 
-        if(showPath) {
+        if (showPath) {
             polyline = map.addPolyline(new PolylineOptions()
                     .addAll(positions)
                     .width(5)
@@ -57,32 +57,56 @@ public class Track {
     public void RefreshUserTrack(GoogleMap map) {
         List<LatLng> positions = new ArrayList<>();
 
-        for(int i=0;i<checkpoints.size();i++)
-        {
+        for (int i = 0; i < checkpoints.size(); i++) {
             positions.add(checkpoints.get(i).position);
         }
 
-        if (checkpoints.size()>2)
+        if (checkpoints.size() > 2)
             polyline.remove();
 
-            polyline = map.addPolyline(new PolylineOptions()
-                    .addAll(positions)
-                    .width(5)
-                    .color(Color.BLUE));
+        polyline = map.addPolyline(new PolylineOptions()
+                .addAll(positions)
+                .width(5)
+                .color(Color.BLUE));
+
+    }
+
+    public void DeleteLastCheckpoint() {
+        if (checkpoints.size() < 1)
+            return;
+
+        checkpoints.get(checkpoints.size() - 1).RemoveMarker();
+        checkpoints.remove((checkpoints.size() - 1));
+
 
     }
 
     public void RemoveTrackFromMap() {
-        for(Checkpoint checkpoint : checkpoints)
+        for (Checkpoint checkpoint : checkpoints)
             checkpoint.RemoveMarker();
         checkpoints.clear();
 
-        polyline.remove();
+        if (polyline != null)
+            polyline.remove();
         polyline = null;
     }
 
-    public List<Checkpoint> getCheckpoints()
-    {
+    public void RefreshTrack(GoogleMap mmap) {
+        List<LatLng> positions = new ArrayList<>();
+
+        for (int i = 0; i < checkpoints.size(); i++) {
+            positions.add(checkpoints.get(i).position);
+        }
+
+        RemoveTrackFromMap();
+
+        for (LatLng position : positions)
+            AddCheckpoint(position);
+
+        PlaceTrackOnMap(mmap, true);
+    }
+
+    public List<Checkpoint> getCheckpoints() {
         return checkpoints;
     }
 }
