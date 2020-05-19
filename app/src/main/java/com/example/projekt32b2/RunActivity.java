@@ -5,12 +5,18 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Camera;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
 
 import com.example.projekt32b2.tracksManagement.Checkpoint;
 import com.example.projekt32b2.tracksManagement.CheckpointType;
@@ -33,6 +39,7 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
 
 public class RunActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -41,11 +48,14 @@ public class RunActivity extends FragmentActivity implements OnMapReadyCallback 
     private GoogleMap mMap;
     private FusedLocationProviderClient _fused;
     private LocationCallback locationCallback;
-    private List<Checkpoint> checkpoints;
     private UserMarker userMarker;
     private float zoomValue = 20f;
     private Track userTrack;
-
+    private long startTime;
+    private int currentCheckpoint;
+    private List<Long> timesList=new ArrayList<>();
+    private boolean isTrackFinished=false;
+    private Track track;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +68,6 @@ public class RunActivity extends FragmentActivity implements OnMapReadyCallback 
 
         createLocationRequest();
 
-
         locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
@@ -68,14 +77,20 @@ public class RunActivity extends FragmentActivity implements OnMapReadyCallback 
                 for (Location location : locationResult.getLocations()) {
                     LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
                     double result = 0;
-                    if (userMarker != null) {
-                        for (int i = 0; i < trackCheckpoints.size() - 1; i++) {
-                            result = Utilities.distanceInMeters(latLng, trackCheckpoints.get(i).position);
-                            Log.d("odleglosc do " + String.valueOf(i), String.valueOf(result));
-                            if (result < 15) {
-                                trackCheckpoints.get(i).RemoveMarker();
-                                trackCheckpoints.get(i).PlaceMarker(mMap, CheckpointType.CHECKPOINT_CHECKED);
-                                Log.d("success", "Zblizyles sie blisko");
+                    if (userMarker != null &&isTrackFinished==false ) {
+                        if(Utilities.distanceInMeters(latLng, trackCheckpoints.get(currentCheckpoint).position)<12&&!(trackCheckpoints.get(currentCheckpoint).type==CheckpointType.CHECKPOINT_CHECKED))
+                        {
+                            long elapsedTime=(SystemClock.elapsedRealtime()-startTime)/1000;
+                            timesList.add(elapsedTime);
+                            trackCheckpoints.get(currentCheckpoint).RemoveMarker();
+                            trackCheckpoints.get(currentCheckpoint).PlaceMarker(mMap, CheckpointType.CHECKPOINT_CHECKED);
+                            Toast.makeText(getApplicationContext(),"time elapsed: "+ String.valueOf(elapsedTime),Toast.LENGTH_SHORT).show();
+                            currentCheckpoint++;
+                            if (trackCheckpoints.size()==currentCheckpoint)
+                            {
+                                isTrackFinished=true;
+                                Button button=findViewById(R.id.button6);
+                                button.setVisibility(View.VISIBLE);
                             }
                         }
                     }
@@ -116,15 +131,15 @@ public class RunActivity extends FragmentActivity implements OnMapReadyCallback 
 
         track.PlaceTrackOnMap(googleMap, true);
         trackCheckpoints = track.getCheckpoints();
-
+        this.track=track;
         _fused = LocationServices.getFusedLocationProviderClient(this);
         startLocationUpdates();
     }
 
     protected void createLocationRequest() {
         _locationRequest = LocationRequest.create();
-        _locationRequest.setInterval(10000);
-        _locationRequest.setFastestInterval(5000);
+        _locationRequest.setInterval(1000);
+        _locationRequest.setFastestInterval(500);
         _locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
@@ -133,4 +148,19 @@ public class RunActivity extends FragmentActivity implements OnMapReadyCallback 
         _fused.requestLocationUpdates(_locationRequest, locationCallback, Looper.getMainLooper());
     }
 
+    public void StartTimer(View view) {
+        startTime= SystemClock.elapsedRealtime();
+        Toast.makeText(getApplicationContext(),"Timer has started",Toast.LENGTH_SHORT).show();
+    }
+
+    public void saveTimes(View view)
+    {
+        Gson gson = new Gson();
+
+        Intent returnIntent = new Intent();
+        returnIntent.putExtra("TrackName",track.Name);
+        returnIntent.putExtra("times", gson.toJson(timesList));
+        setResult(Activity.RESULT_OK, returnIntent);
+        finish();
+    }
 }
