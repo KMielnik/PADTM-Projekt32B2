@@ -2,6 +2,7 @@ package com.example.projekt32b2.tracksManagement;
 
 import android.graphics.Color;
 
+import com.example.projekt32b2.Utilities;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Polyline;
@@ -79,6 +80,14 @@ public class Track {
         checkpoints.remove((checkpoints.size() - 1));
 
 
+    }
+
+    public double getTrackLength() {
+        double length = 0;
+        for (int i = 0; i < checkpoints.size() - 1; i++) {
+            length += Utilities.distanceInMeters(checkpoints.get(i).position, checkpoints.get(i + 1).position);
+        }
+        return length;
     }
 
     public void RemoveTrackFromMap() {
