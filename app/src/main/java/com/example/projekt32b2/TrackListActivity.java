@@ -12,6 +12,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.projekt32b2.tracksManagement.Track;
 import com.google.android.gms.maps.model.LatLng;
@@ -23,13 +24,13 @@ import java.util.List;
 
 public class TrackListActivity extends AppCompatActivity {
 
+    private final int LAUNCH_CREATE_TRACK_ACTIVITY = 1;
+    private final int LAUNCH_RUN_ACTIVITY = 2;
     private List<Track> trackList;
     private RecyclerView recyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
     private Gson gson;
-
-    private int LAUNCH_CREATE_TRACK_ACTIVITY = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +51,7 @@ public class TrackListActivity extends AppCompatActivity {
             public void onItemClick(Track item) {
                 Intent i = new Intent(getApplicationContext(), RunActivity.class);
                 i.putExtra("track", gson.toJson(item));
-                startActivity(i);
+                startActivityForResult(i, LAUNCH_RUN_ACTIVITY);
             }
 
             @Override
@@ -76,11 +77,24 @@ public class TrackListActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == LAUNCH_CREATE_TRACK_ACTIVITY) {
-            if (resultCode == Activity.RESULT_OK) {
-                Track track = gson.fromJson(data.getStringExtra("track"), Track.class);
-                trackList.add(track);
-                mAdapter.notifyItemInserted(trackList.size() - 1);
+        switch (requestCode) {
+            case LAUNCH_CREATE_TRACK_ACTIVITY: {
+                if (resultCode == Activity.RESULT_OK) {
+                    Track track = gson.fromJson(data.getStringExtra("track"), Track.class);
+                    trackList.add(track);
+                    mAdapter.notifyItemInserted(trackList.size() - 1);
+                }
+                break;
+            }
+
+            case LAUNCH_RUN_ACTIVITY: {
+                if (resultCode == Activity.RESULT_OK) {
+                    ArrayList<Long> times = gson.fromJson(data.getStringExtra("times"), ArrayList.class);
+                    String trackName = gson.fromJson(data.getStringExtra("trackName"), String.class);
+
+                    Toast.makeText(getApplicationContext(), "Ukończono trase: " + trackName + " w " + times.get(times.size() - 1) + " s.", Toast.LENGTH_LONG).show();
+                }
+                break;
             }
         }
     }
@@ -96,12 +110,12 @@ public class TrackListActivity extends AppCompatActivity {
             trackList.add(track);
         }
 
-        Track szczecinTrack=new Track("Szczecin");
-        szczecinTrack.AddCheckpoint(new LatLng(53.428555, 14.532046),10);
-        szczecinTrack.AddCheckpoint(new LatLng(53.429154, 14.532199),10);
-        szczecinTrack.AddCheckpoint(new LatLng(53.430524, 14.532502),10);
-        szczecinTrack.AddCheckpoint(new LatLng(53.431670, 14.532698),10);
-        szczecinTrack.AddCheckpoint(new LatLng(53.431366, 14.534514 ),10);
+        Track szczecinTrack = new Track("Szczecin");
+        szczecinTrack.AddCheckpoint(new LatLng(53.428555, 14.532046), 10);
+        szczecinTrack.AddCheckpoint(new LatLng(53.429154, 14.532199), 10);
+        szczecinTrack.AddCheckpoint(new LatLng(53.430524, 14.532502), 10);
+        szczecinTrack.AddCheckpoint(new LatLng(53.431670, 14.532698), 10);
+        szczecinTrack.AddCheckpoint(new LatLng(53.431366, 14.534514), 10);
         trackList.add(szczecinTrack);
     }
 }
