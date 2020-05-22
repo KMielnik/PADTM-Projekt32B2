@@ -19,6 +19,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -56,7 +57,7 @@ public class CreateTrackActivity extends FragmentActivity implements OnMapReadyC
             return;
         }
 
-        if(newTrack.getCheckpoints().size() < 2) {
+        if (newTrack.getCheckpoints().size() < 2) {
             Toast.makeText(this, "Place at least two points on track.", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -67,7 +68,7 @@ public class CreateTrackActivity extends FragmentActivity implements OnMapReadyC
 
         Track shallowTrack = new Track(track_name);
 
-        for(Checkpoint checkpoint : newTrack.getCheckpoints()) {
+        for (Checkpoint checkpoint : newTrack.getCheckpoints()) {
             shallowTrack.AddCheckpoint(checkpoint.position);
         }
 
@@ -93,27 +94,22 @@ public class CreateTrackActivity extends FragmentActivity implements OnMapReadyC
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(LatLng latLng) {
-               newTrack.AddCheckpoint(latLng);
-               newTrack.RefreshTrack(mMap);
+                newTrack.AddCheckpoint(latLng);
+                newTrack.RefreshTrack(mMap);
             }
         });
+
         moveCameraToCurrentLocation();
     }
 
     private void moveCameraToCurrentLocation() {
-        fusedLocationClient.getLastLocation()
-                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        LatLng startingLocation;
-                        if (location != null)
-                            startingLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                        else
-                            startingLocation = new LatLng(53.4515, 14.5281);
+        CameraPosition bottomPos = new CameraPosition.Builder()
+                .bearing(0)
+                .target(new LatLng(53.428555, 14.532046))
+                .tilt(0)
+                .zoom(17)
+                .build();
 
-                        mMap.moveCamera(CameraUpdateFactory.newLatLng(startingLocation));
-                        mMap.moveCamera(CameraUpdateFactory.zoomTo(17));
-                    }
-                });
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(bottomPos));
     }
 }

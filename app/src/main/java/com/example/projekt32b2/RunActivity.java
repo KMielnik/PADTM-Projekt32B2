@@ -49,12 +49,12 @@ public class RunActivity extends FragmentActivity implements OnMapReadyCallback 
     private FusedLocationProviderClient _fused;
     private LocationCallback locationCallback;
     private UserMarker userMarker;
-    private float zoomValue = 20f;
+    private float zoomValue = 18.5f;
     private Track userTrack;
     private long startTime;
     private int currentCheckpoint;
-    private List<Long> timesList=new ArrayList<>();
-    private boolean isTrackFinished=false;
+    private List<Long> timesList = new ArrayList<>();
+    private boolean isTrackFinished = false;
     private Track track;
 
     @Override
@@ -77,19 +77,17 @@ public class RunActivity extends FragmentActivity implements OnMapReadyCallback 
                 for (Location location : locationResult.getLocations()) {
                     LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
                     double result = 0;
-                    if (userMarker != null &&isTrackFinished==false ) {
-                        if(Utilities.distanceInMeters(latLng, trackCheckpoints.get(currentCheckpoint).position)<12&&!(trackCheckpoints.get(currentCheckpoint).type==CheckpointType.CHECKPOINT_CHECKED))
-                        {
-                            long elapsedTime=(SystemClock.elapsedRealtime()-startTime)/1000;
+                    if (userMarker != null && isTrackFinished == false) {
+                        if (Utilities.distanceInMeters(latLng, trackCheckpoints.get(currentCheckpoint).position) < 12 && !(trackCheckpoints.get(currentCheckpoint).type == CheckpointType.CHECKPOINT_CHECKED)) {
+                            long elapsedTime = (SystemClock.elapsedRealtime() - startTime) / 1000;
                             timesList.add(elapsedTime);
                             trackCheckpoints.get(currentCheckpoint).RemoveMarker();
                             trackCheckpoints.get(currentCheckpoint).PlaceMarker(mMap, CheckpointType.CHECKPOINT_CHECKED);
-                            Toast.makeText(getApplicationContext(),"time elapsed: "+ String.valueOf(elapsedTime),Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "time elapsed: " + String.valueOf(elapsedTime), Toast.LENGTH_SHORT).show();
                             currentCheckpoint++;
-                            if (trackCheckpoints.size()==currentCheckpoint)
-                            {
-                                isTrackFinished=true;
-                                Button button=findViewById(R.id.button6);
+                            if (trackCheckpoints.size() == currentCheckpoint) {
+                                isTrackFinished = true;
+                                Button button = findViewById(R.id.button6);
                                 button.setVisibility(View.VISIBLE);
                             }
                         }
@@ -112,7 +110,7 @@ public class RunActivity extends FragmentActivity implements OnMapReadyCallback 
                             .bearing(location.getBearing())
                             .target(latLng)
                             .tilt(0)
-                            .zoom(zoomValue)
+                            .zoom(mMap.getCameraPosition().zoom < 14 ? zoomValue : mMap.getCameraPosition().zoom)
                             .build();
 
                     mMap.animateCamera(CameraUpdateFactory.newCameraPosition(bottomPos));
@@ -131,14 +129,14 @@ public class RunActivity extends FragmentActivity implements OnMapReadyCallback 
 
         track.PlaceTrackOnMap(googleMap, true);
         trackCheckpoints = track.getCheckpoints();
-        this.track=track;
+        this.track = track;
         _fused = LocationServices.getFusedLocationProviderClient(this);
         startLocationUpdates();
     }
 
     protected void createLocationRequest() {
         _locationRequest = LocationRequest.create();
-        _locationRequest.setInterval(1000);
+        _locationRequest.setInterval(1500);
         _locationRequest.setFastestInterval(500);
         _locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
@@ -149,16 +147,15 @@ public class RunActivity extends FragmentActivity implements OnMapReadyCallback 
     }
 
     public void StartTimer(View view) {
-        startTime= SystemClock.elapsedRealtime();
-        Toast.makeText(getApplicationContext(),"Timer has started",Toast.LENGTH_SHORT).show();
+        startTime = SystemClock.elapsedRealtime();
+        Toast.makeText(getApplicationContext(), "Timer has started", Toast.LENGTH_SHORT).show();
     }
 
-    public void saveTimes(View view)
-    {
+    public void saveTimes(View view) {
         Gson gson = new Gson();
 
         Intent returnIntent = new Intent();
-        returnIntent.putExtra("TrackName",track.Name);
+        returnIntent.putExtra("trackName", track.Name);
         returnIntent.putExtra("times", gson.toJson(timesList));
         setResult(Activity.RESULT_OK, returnIntent);
         finish();
