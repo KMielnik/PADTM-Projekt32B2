@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,22 +21,27 @@ import com.google.android.gms.tasks.Task;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class TrackListActivity extends AppCompatActivity {
 
     private final int LAUNCH_CREATE_TRACK_ACTIVITY = 1;
     private final int LAUNCH_RUN_ACTIVITY = 2;
+    private final String SAVED_TRACKS_STRING = "savedTracks";
     private List<Track> trackList;
     private RecyclerView recyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
     private Gson gson;
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_track_list);
+
+        sharedPreferences = getPreferences(Context.MODE_PRIVATE);
 
         trackList = new ArrayList<>();
 
@@ -65,12 +71,28 @@ public class TrackListActivity extends AppCompatActivity {
 
         gson = new Gson();
 
-        seedTrackList();
+        if (sharedPreferences.contains(SAVED_TRACKS_STRING)) {
+            Track[] tracks = gson.fromJson(sharedPreferences.getString(SAVED_TRACKS_STRING, "{}"), Track[].class);
+
+            trackList.addAll(new ArrayList<Track>(Arrays.asList(tracks)));
+        }
+
+        if (trackList.size() == 0)
+            seedTrackList();
     }
 
     public void onNewTrackButtonClick(View view) {
         Intent i = new Intent(this, CreateTrackActivity.class);
         startActivityForResult(i, LAUNCH_CREATE_TRACK_ACTIVITY);
+    }
+
+    public void onClearTracksClicked(View view) {
+        trackList.clear();
+        mAdapter.notifyDataSetChanged();
+
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(SAVED_TRACKS_STRING, gson.toJson(trackList.toArray()));
+        editor.commit();
     }
 
     @Override
@@ -83,6 +105,10 @@ public class TrackListActivity extends AppCompatActivity {
                     Track track = gson.fromJson(data.getStringExtra("track"), Track.class);
                     trackList.add(track);
                     mAdapter.notifyItemInserted(trackList.size() - 1);
+
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString(SAVED_TRACKS_STRING, gson.toJson(trackList.toArray()));
+                    editor.commit();
                 }
                 break;
             }
@@ -100,16 +126,6 @@ public class TrackListActivity extends AppCompatActivity {
     }
 
     private void seedTrackList() {
-        for (int i = 0; i < 5; i++) {
-            Track track = new Track("Trasa: " + (i + 1));
-            track.AddCheckpoint(new LatLng(i + 5, 3));
-            track.AddCheckpoint(new LatLng(i + 2, 3 + i));
-            track.AddCheckpoint(new LatLng(5, 1));
-            track.AddCheckpoint(new LatLng(7, 3 + i + i));
-
-            trackList.add(track);
-        }
-
         Track szczecinTrack = new Track("Szczecin");
         szczecinTrack.AddCheckpoint(new LatLng(53.428555, 14.532046), 10);
         szczecinTrack.AddCheckpoint(new LatLng(53.429154, 14.532199), 10);
