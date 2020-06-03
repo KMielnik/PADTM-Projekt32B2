@@ -16,6 +16,7 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Chronometer;
 import android.widget.Toast;
 
 import com.example.projekt32b2.tracksManagement.Checkpoint;
@@ -87,6 +88,7 @@ public class RunActivity extends FragmentActivity implements OnMapReadyCallback 
                             currentCheckpoint++;
                             if (trackCheckpoints.size() == currentCheckpoint) {
                                 isTrackFinished = true;
+                                findViewById(R.id.chronometer).setVisibility(View.INVISIBLE);
                                 Button button = findViewById(R.id.button6);
                                 button.setVisibility(View.VISIBLE);
                             }
@@ -147,6 +149,10 @@ public class RunActivity extends FragmentActivity implements OnMapReadyCallback 
     }
 
     public void StartTimer(View view) {
+        Chronometer mChronometer=(Chronometer) findViewById(R.id.chronometer);
+        mChronometer.setVisibility(View.VISIBLE);
+        mChronometer.setBase(SystemClock.elapsedRealtime());
+        mChronometer.start();
         startTime = SystemClock.elapsedRealtime();
         Toast.makeText(getApplicationContext(), "Timer has started", Toast.LENGTH_SHORT).show();
     }
