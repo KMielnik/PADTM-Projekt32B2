@@ -155,8 +155,8 @@ public class RunActivity extends FragmentActivity implements OnMapReadyCallback 
         mChronometer.start();
         startTime = SystemClock.elapsedRealtime();
         Toast.makeText(getApplicationContext(), "Timer has started", Toast.LENGTH_SHORT).show();
-        final Button button = (Button) findViewById(R.id.button4);
-        button.setVisibility(View.INVISIBLE);
+       // final Button button = (Button) findViewById(R.id.button4);
+        //button.setVisibility(View.INVISIBLE);
 
 
     }
