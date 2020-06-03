@@ -149,6 +149,10 @@ public class RunActivity extends FragmentActivity implements OnMapReadyCallback 
     public void StartTimer(View view) {
         startTime = SystemClock.elapsedRealtime();
         Toast.makeText(getApplicationContext(), "Timer has started", Toast.LENGTH_SHORT).show();
+        final Button button = (Button) findViewById(R.id.button4);
+        button.setVisibility(View.INVISIBLE);
+
+
     }
 
     public void saveTimes(View view) {
@@ -160,4 +164,6 @@ public class RunActivity extends FragmentActivity implements OnMapReadyCallback 
         setResult(Activity.RESULT_OK, returnIntent);
         finish();
     }
+
+
 }

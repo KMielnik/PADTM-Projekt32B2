@@ -4,13 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#59D3FF"
     tools:context=".TrackListActivity">
 
     <Button
         android:id="@+id/button7"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="123dp"
+        android:layout_height="48dp"
         android:layout_marginTop="8dp"
+        android:background="@drawable/button_round_corners"
         android:onClick="onClearTracksClicked"
         android:text="Clear tracks"
         app:layout_constraintEnd_toStartOf="@+id/button3"
@@ -20,9 +22,10 @@
 
     <Button
         android:id="@+id/button3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="125dp"
+        android:layout_height="47dp"
         android:layout_marginTop="8dp"
+        android:background="@drawable/button_round_corners"
         android:onClick="onNewTrackButtonClick"
         android:text="Create Track"
         app:layout_constraintEnd_toEndOf="parent"
@@ -38,9 +41,12 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
+        android:background="@drawable/layout_bg"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button3" />
+        app:layout_constraintTop_toBottomOf="@+id/button3"
+        app:layout_constraintVertical_bias="0.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -6,16 +6,39 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <!-- runner 1 -->
+
+
+    <!-- drawable/runner_1.xml -->
+
+
     <Button
         android:id="@+id/open_map_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="154dp"
+        android:layout_height="52dp"
+        android:background="@drawable/rectangle_3"
         android:onClick="openMapActivity"
         android:text="Open Map"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/runner_1"
+        app:layout_constraintVertical_bias="0.603" />
+
+    <View
+        android:id="@+id/runner_1"
+        android:layout_width="220dp"
+        android:layout_height="205dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/runner_1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.499" />
+        app:layout_constraintVertical_bias="0.249" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
