@@ -8,61 +8,46 @@
     <fragment
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_width="413dp"
-        android:layout_height="685dp"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
 
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.578"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.25"
         tools:context=".CreateTrackActivity" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
-        android:layout_width="413dp"
-        android:layout_height="95dp"
-        android:background="#59D3FF"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:gravity="bottom"
+        android:background="#59D3FF"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent">
 
         <Button
-            android:layout_width="34dp"
+            android:layout_width="52dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
             android:background="@drawable/button_round_corners"
             android:onClick="onUndoButtonClick"
             android:text="Undo" />
 
         <Button
-            android:layout_width="27dp"
+            android:layout_width="58dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
             android:background="@drawable/button_round_corners"
             android:onClick="onClearButtonClick"
             android:text="Reset" />
 
         <LinearLayout
-            android:layout_width="54dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="3"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
             android:orientation="vertical">
 
             <EditText
@@ -75,7 +60,7 @@
 
             <Button
                 android:layout_width="match_parent"
-                android:layout_height="34dp"
+                android:layout_height="wrap_content"
                 android:background="@drawable/button_round_corners"
                 android:onClick="onSaveClicked"
                 android:text="Save" />
