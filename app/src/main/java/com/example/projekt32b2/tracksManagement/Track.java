@@ -90,6 +90,12 @@ public class Track {
         return length;
     }
 
+    public LatLng getStartingLocation() {
+        if (checkpoints.size()>0)
+            return checkpoints.get(0).position;
+        return null;
+    }
+
     public void RemoveTrackFromMap() {
         for (Checkpoint checkpoint : checkpoints)
             checkpoint.RemoveMarker();
