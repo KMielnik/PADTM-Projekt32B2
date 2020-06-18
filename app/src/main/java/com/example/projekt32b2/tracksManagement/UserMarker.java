@@ -18,6 +18,7 @@ public class UserMarker {
         this.position = position;
         markerRadius = 10.;
     }
+    public UserMarker(){}
 
     public void PlaceMarker(GoogleMap map) {
         MarkerOptions newMarker = new MarkerOptions()

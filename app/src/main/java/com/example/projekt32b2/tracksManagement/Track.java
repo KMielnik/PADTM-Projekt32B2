@@ -44,7 +44,7 @@ public class Track {
 
             checkpoints.get(i).PlaceMarker(map, type);
 
-            positions.add(checkpoints.get(i).position);
+            positions.add(checkpoints.get(i).position.getLatLng());
         }
 
         if (showPath) {
@@ -59,7 +59,7 @@ public class Track {
         List<LatLng> positions = new ArrayList<>();
 
         for (int i = 0; i < checkpoints.size(); i++) {
-            positions.add(checkpoints.get(i).position);
+            positions.add(checkpoints.get(i).position.getLatLng());
         }
 
         if (checkpoints.size() > 2)
@@ -82,12 +82,20 @@ public class Track {
 
     }
 
+    public Track() {}
+
     public double getTrackLength() {
         double length = 0;
         for (int i = 0; i < checkpoints.size() - 1; i++) {
-            length += Utilities.distanceInMeters(checkpoints.get(i).position, checkpoints.get(i + 1).position);
+            length += Utilities.distanceInMeters(checkpoints.get(i).position.getLatLng(), checkpoints.get(i + 1).position.getLatLng());
         }
         return length;
+    }
+
+    public LatLng getStartingLocation() {
+        if (checkpoints.size()>0)
+            return checkpoints.get(0).position.getLatLng();
+        return null;
     }
 
     public void RemoveTrackFromMap() {
@@ -104,7 +112,7 @@ public class Track {
         List<LatLng> positions = new ArrayList<>();
 
         for (int i = 0; i < checkpoints.size(); i++) {
-            positions.add(checkpoints.get(i).position);
+            positions.add(checkpoints.get(i).position.getLatLng());
         }
 
         RemoveTrackFromMap();

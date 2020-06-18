@@ -9,19 +9,31 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.projekt32b2.tracksManagement.Checkpoint;
 import com.example.projekt32b2.tracksManagement.Track;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class TrackListActivity extends AppCompatActivity {
@@ -35,6 +47,10 @@ public class TrackListActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager layoutManager;
     private Gson gson;
     private SharedPreferences sharedPreferences;
+    private FusedLocationProviderClient fusedLocationClient;
+
+    private LatLng userLocation;
+    private DatabaseReference databaseTracks;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +68,44 @@ public class TrackListActivity extends AppCompatActivity {
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        databaseTracks = database.getReference("tracks");
+
+        databaseTracks.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Iterable<DataSnapshot> tracks = dataSnapshot.getChildren();
+                trackList.clear();
+                for (DataSnapshot trackData: tracks) {
+                    String name = trackData.child("Name").getValue(String.class);
+                    if(name==null) continue;
+                    Track track = new Track(name);
+
+                    for (DataSnapshot checkpointData: trackData.child("checkpoints").getChildren()) {
+
+                        LatLng latLng = new LatLng(checkpointData.child("position").child("latitude").getValue(Double.class),
+                                checkpointData.child("position").child("longitude").getValue(Double.class));
+                        track.AddCheckpoint(latLng, 20);
+                    }
+
+                    trackList.add(track);
+                }
+
+                sortTracks();
+                mAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w("Database error:", "Failed to read value.", error.toException());
+            }
+        });
+
+
+
         mAdapter = new TrackListAdapter(trackList, new TrackListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(Track item) {
@@ -64,6 +118,8 @@ public class TrackListActivity extends AppCompatActivity {
             public void onItemLongClick(Track item) {
                 int i = trackList.indexOf(item);
                 trackList.remove(i);
+                databaseTracks.child(item.Name).removeValue();
+
                 mAdapter.notifyItemRemoved(i);
             }
         });
@@ -77,8 +133,41 @@ public class TrackListActivity extends AppCompatActivity {
             trackList.addAll(new ArrayList<Track>(Arrays.asList(tracks)));
         }
 
-        if (trackList.size() == 0)
-            seedTrackList();
+
+    }
+
+    private void sortTracks() {
+        if(userLocation==null)
+            return;
+
+        Collections.sort(trackList, new Comparator<Track>() {
+            @Override
+            public int compare(Track o1, Track o2) {
+                double distance1 = Utilities.distanceInMeters(userLocation, o1.getStartingLocation());
+                double distance2 = Utilities.distanceInMeters(userLocation, o2.getStartingLocation());
+
+                return Double.compare(distance1, distance2);
+            }
+        });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        fusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        // Got last known location. In some rare situations this can be null.
+                        if (location != null) {
+                            userLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                            ((TrackListAdapter)mAdapter).setUserLocation(userLocation);
+                            sortTracks();
+                            mAdapter.notifyDataSetChanged();
+                        }
+                    }
+                });
     }
 
     public void onNewTrackButtonClick(View view) {
@@ -104,8 +193,10 @@ public class TrackListActivity extends AppCompatActivity {
                 if (resultCode == Activity.RESULT_OK) {
                     Track track = gson.fromJson(data.getStringExtra("track"), Track.class);
                     trackList.add(track);
-                    mAdapter.notifyItemInserted(trackList.size() - 1);
+                    sortTracks();
+                    mAdapter.notifyDataSetChanged();
 
+                    databaseTracks.child(track.Name).setValue(track);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putString(SAVED_TRACKS_STRING, gson.toJson(trackList.toArray()));
                     editor.commit();

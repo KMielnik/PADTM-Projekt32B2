@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "475145557816",
+    "firebase_url": "https://zut-padtm.firebaseio.com",
+    "project_id": "zut-padtm",
+    "storage_bucket": "zut-padtm.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:475145557816:android:ae58558b1f2d19ab7a93cd",
+        "android_client_info": {
+          "package_name": "com.example.projekt32b2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "475145557816-9ambaaqa6eoqaqnvctqsa1nbj8c7i7ae.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCPUhKnRuAeTYFw03r11dsSKZslaeeeVRg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "475145557816-9ambaaqa6eoqaqnvctqsa1nbj8c7i7ae.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

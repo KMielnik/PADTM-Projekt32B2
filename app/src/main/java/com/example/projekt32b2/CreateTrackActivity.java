@@ -4,7 +4,6 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -18,15 +17,9 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.gson.Gson;
-
-import java.util.List;
 
 public class CreateTrackActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -69,7 +62,7 @@ public class CreateTrackActivity extends FragmentActivity implements OnMapReadyC
         Track shallowTrack = new Track(track_name);
 
         for (Checkpoint checkpoint : newTrack.getCheckpoints()) {
-            shallowTrack.AddCheckpoint(checkpoint.position);
+            shallowTrack.AddCheckpoint(checkpoint.position.getLatLng());
         }
 
         returnIntent.putExtra("track", gson.toJson(shallowTrack));

@@ -8,19 +8,6 @@
     tools:context=".TrackListActivity">
 
     <Button
-        android:id="@+id/button7"
-        android:layout_width="123dp"
-        android:layout_height="48dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/button_round_corners"
-        android:onClick="onClearTracksClicked"
-        android:text="Clear tracks"
-        app:layout_constraintEnd_toStartOf="@+id/button3"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
         android:id="@+id/button3"
         android:layout_width="125dp"
         android:layout_height="47dp"
@@ -29,8 +16,7 @@
         android:onClick="onNewTrackButtonClick"
         android:text="Create Track"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/button7"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView

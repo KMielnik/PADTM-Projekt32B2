@@ -1,6 +1,5 @@
 package com.example.projekt32b2.tracksManagement;
 
-import com.example.projekt32b2.R;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -11,7 +10,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class Checkpoint {
-    public LatLng position;
+    public LatLngHax position;
     public double markerRadius;
     public CheckpointType type;
 
@@ -24,7 +23,7 @@ public class Checkpoint {
     }
 
     public Checkpoint(LatLng position) {
-        this.position = position;
+        this.position = new LatLngHax(position);
         markerRadius = 20.;
     }
 
@@ -45,19 +44,21 @@ public class Checkpoint {
 
     public void PlaceMarker(GoogleMap map, CheckpointType type) {
         MarkerOptions newMarker = new MarkerOptions()
-                .position(position)
+                .position(position.getLatLng())
                 .icon(_getIcon(type))
                 .draggable(false);
 
         marker = map.addMarker(newMarker);
 
         CircleOptions circleOptions = new CircleOptions()
-                .center(position)
+                .center(position.getLatLng())
                 .fillColor(3)
                 .radius(markerRadius);
 
         circle = map.addCircle(circleOptions);
     }
+
+    public Checkpoint(){}
 
     public void RemoveMarker() {
         if (marker != null)
