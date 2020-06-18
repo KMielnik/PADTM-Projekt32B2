@@ -16,12 +16,18 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.projekt32b2.tracksManagement.Checkpoint;
 import com.example.projekt32b2.tracksManagement.Track;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -44,6 +50,7 @@ public class TrackListActivity extends AppCompatActivity {
     private FusedLocationProviderClient fusedLocationClient;
 
     private LatLng userLocation;
+    private DatabaseReference databaseTracks;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +70,41 @@ public class TrackListActivity extends AppCompatActivity {
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        databaseTracks = database.getReference("tracks");
+
+        databaseTracks.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Iterable<DataSnapshot> tracks = dataSnapshot.getChildren();
+                trackList.clear();
+                for (DataSnapshot trackData: tracks) {
+                    String name = trackData.child("Name").getValue(String.class);
+                    if(name==null) continue;
+                    Track track = new Track(name);
+
+                    for (DataSnapshot checkpointData: trackData.child("checkpoints").getChildren()) {
+
+                        LatLng latLng = new LatLng(checkpointData.child("position").child("latitude").getValue(Double.class),
+                                checkpointData.child("position").child("longitude").getValue(Double.class));
+                        track.AddCheckpoint(latLng, 20);
+                    }
+
+                    trackList.add(track);
+                }
+
+                sortTracks();
+                mAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w("Database error:", "Failed to read value.", error.toException());
+            }
+        });
+
+
 
         mAdapter = new TrackListAdapter(trackList, new TrackListAdapter.OnItemClickListener() {
             @Override
@@ -76,6 +118,8 @@ public class TrackListActivity extends AppCompatActivity {
             public void onItemLongClick(Track item) {
                 int i = trackList.indexOf(item);
                 trackList.remove(i);
+                databaseTracks.child(item.Name).removeValue();
+
                 mAdapter.notifyItemRemoved(i);
             }
         });
@@ -89,8 +133,7 @@ public class TrackListActivity extends AppCompatActivity {
             trackList.addAll(new ArrayList<Track>(Arrays.asList(tracks)));
         }
 
-        if (trackList.size() == 0)
-            seedTrackList();
+
     }
 
     private void sortTracks() {
@@ -153,6 +196,7 @@ public class TrackListActivity extends AppCompatActivity {
                     sortTracks();
                     mAdapter.notifyDataSetChanged();
 
+                    databaseTracks.child(track.Name).setValue(track);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putString(SAVED_TRACKS_STRING, gson.toJson(trackList.toArray()));
                     editor.commit();

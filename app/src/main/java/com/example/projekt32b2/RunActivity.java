@@ -1,19 +1,13 @@
 package com.example.projekt32b2;
 
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Camera;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Looper;
 import android.os.SystemClock;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
@@ -34,13 +28,10 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
 
 public class RunActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -79,7 +70,7 @@ public class RunActivity extends FragmentActivity implements OnMapReadyCallback 
                     LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
                     double result = 0;
                     if (userMarker != null && isTrackFinished == false) {
-                        if (Utilities.distanceInMeters(latLng, trackCheckpoints.get(currentCheckpoint).position) < 12 && !(trackCheckpoints.get(currentCheckpoint).type == CheckpointType.CHECKPOINT_CHECKED)) {
+                        if (Utilities.distanceInMeters(latLng, trackCheckpoints.get(currentCheckpoint).position.getLatLng()) < 12 && !(trackCheckpoints.get(currentCheckpoint).type == CheckpointType.CHECKPOINT_CHECKED)) {
                             long elapsedTime = (SystemClock.elapsedRealtime() - startTime) / 1000;
                             timesList.add(elapsedTime);
                             trackCheckpoints.get(currentCheckpoint).RemoveMarker();
